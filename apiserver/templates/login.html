@@ -1,0 +1,17 @@
+{% extends './layout.html' %}
+
+{% block login_content %}
+    <form action="/user/login/" method="POST">
+        <div>
+            <label for="username">User name</label>
+            <input type="text" class="form-control" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name = "password" required>
+        </div>
+        <br>
+        <input type="submit" class="btn btn-primary" value="Submit" />
+    </form>
+
+{% endblock login_content %}

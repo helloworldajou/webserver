@@ -1,25 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-    <meta charset="UTF-8">
-    <title>Cumera!</title>
-</head>
-<body>
-    <img src="/static/helloworld_cumera.jpeg" style="width:100%;height:auto;">
-    <center>
-        {% if logged_in %}
-            <p> You are logged in as <span style="font-weight:bold">{{ username }} </span> </p>
-        {% else %}
-            <form action="/login/">
-                <input type="submit" class="btn btn-primary" value="Sign in" style="width:30%;height:auto;"/>
-            </form>
-            <form action="/join/">
-                <input type="submit" class="btn btn-primary" value="Sign up" style="width:30%;height:auto;"/>
-            </form>
-        {% endif %}
-    </center>
+{% extends './layout.html' %}
 
-</body>
-</html>
+{% block login_content %}
+    <form action="/user/login/">
+        <input type="submit" class="btn btn-primary" value="Sign in" style="width:30%;height:auto;"/>
+    </form>
+    <form action="/user/join/">
+        <input type="submit" class="btn btn-primary" value="Sign up" style="width:30%;height:auto;"/>
+    </form>
+{% endblock login_content %}
+
+{% block degree_content %}
+    <h1>Eyes correction degree</h1>
+    <h3>{{ eyes }}</h3>
+
+    <h1>Chin correction degree</h1>
+    <h3>{{ chin }}</h3>
+{% endblock degree_content %}

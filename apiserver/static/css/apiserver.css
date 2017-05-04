@@ -1,0 +1,88 @@
+/* Base setup */
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+body {
+    margin: 5%;
+    text-align: center;
+    background: #111;
+    color: #333;
+}
+h1 {
+    font-size: 2em;
+    margin-bottom: .5rem;
+}
+
+/* Ratings widget */
+.eyes_rate {
+    display: inline-block;
+    border: 0;
+}
+/* Hide radio */
+.eyes_rate > input {
+    display: none;
+}
+/* Order correctly by floating highest to the right */
+.eyes_rate > label {
+    float: right;
+}
+/* The star of the show */
+.eyes_rate > label:before {
+    display: inline-block;
+    font-size: 1.1rem;
+    padding: .3rem .2rem;
+    margin: 0;
+    cursor: pointer;
+    font-family: FontAwesome;
+    content: "\f005 "; /* full star */
+}
+/* Zero stars rating */
+.eyes_rate > label:last-child:before {
+    content: "\f006 "; /* empty star outline */
+}
+/* Half star trick */
+.eyes_rate .half:before {
+    content: "\f089 "; /* half star no outline */
+    position: absolute;
+    padding-right: 0;
+}
+
+/* Ratings widget */
+.chin_rate {
+    display: inline-block;
+    border: 0;
+}
+/* Hide radio */
+.chin_rate > input {
+    display: none;
+}
+/* Order correctly by floating highest to the right */
+.chin_rate > label {
+    float: right;
+}
+/* The star of the show */
+.chin_rate > label:before {
+    display: inline-block;
+    font-size: 1.1rem;
+    padding: .3rem .2rem;
+    margin: 0;
+    cursor: pointer;
+    font-family: FontAwesome;
+    content: "\f005 "; /* full star */
+}
+/* Zero stars rating */
+.chin_rate > label:last-child:before {
+    content: "\f006 "; /* empty star outline */
+}
+/* Half star trick */
+.chin_rate .half:before {
+    content: "\f089 "; /* half star no outline */
+    position: absolute;
+    padding-right: 0;
+}
+/* Click + hover color */
+input:checked ~ label, /* color current and previous stars on checked */
+label:hover, label:hover ~ label { color: #73B100;  } /* color previous stars on hover */
+
+/* Hover highlights */
+input:checked + label:hover, input:checked ~ label:hover, /* highlight current and previous stars */
+input:checked ~ label:hover ~ label, /* highlight previous selected stars for new rating */
+label:hover ~ input:checked ~ label /* highlight previous selected stars */ { color: #A6E72D;  }

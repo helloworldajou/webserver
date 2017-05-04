@@ -1,0 +1,16 @@
+{% extends './layout.html' %}
+
+{% block degree_content %}
+    <form action="/correction_degree/set/" method="POST">
+        <div>
+            <label for="eyes">Eyes level</label>
+            <input type="text" class="form-control" name="eyes" required>
+        </div>
+        <div>
+            <label for="chin">Chin level</label>
+            <input type="text" class="form-control" name = "chin" required>
+        </div>
+        <br>
+        <input type="submit" class="btn btn-primary" value="Submit" />
+    </form>
+{% endblock degree_content %}

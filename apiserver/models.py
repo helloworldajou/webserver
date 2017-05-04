@@ -8,6 +8,12 @@ class CorrectionDegree(models.Model):
     eyes = models.FloatField(default=0)
     chin = models.FloatField(default=0)
 
+    def return_json(self):
+        return {
+            'eyes': self.eyes,
+            'chin': self.chin
+        }
+
 
 class User(models.Model):
     username = models.CharField(max_length=30)
