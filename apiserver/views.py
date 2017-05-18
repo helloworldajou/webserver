@@ -28,7 +28,7 @@ class IndexView(generic.View):
                 'logged_in': True
             })
 
-        return HttpResponse(request, './index.html', {'message': "You have to sign in!"})
+        return render(request, './index.html', {'message': "You have to sign in!"})
 
 
 class JoinView(generic.View):
@@ -123,7 +123,7 @@ class APICorrectionDegreeView(generic.View):
         return generic.View.dispatch(self, request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(username="kimsup10")
+        user = User.objects.filter(username="kimsup10")[0]
         payload = user.correction_degree.return_json()
         return JsonResponse(payload)
 
