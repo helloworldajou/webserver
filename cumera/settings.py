@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+'''
 CACHES = {
     "default": {
         "BACKEND": "redis_cache.RedisCache",
@@ -57,6 +58,7 @@ CACHES = {
         "KEY_PREFIX": "cumera"
     }
 }
+'''
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
@@ -86,8 +88,12 @@ WSGI_APPLICATION = 'cumera.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'cumeradb',
+        'USER': 'cumera',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
