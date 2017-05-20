@@ -29,4 +29,4 @@ class CorrectionDegreeSetForm(forms.ModelForm):
 class FaceImgForm(forms.ModelForm):
     class Meta:
         model = FaceImage
-        exclude = ['uploaded_at']
+        exclude = ['uploaded_at', 'user']

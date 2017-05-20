@@ -152,13 +152,13 @@ class APISelfieIdentificationView(generic.View):
         return HttpResponse()
 
     def post(self, request, *args, **kwargs):
-        print request.POST, request.FILES
         face_img_form = FaceImgForm(request.POST, request.FILES)
         if face_img_form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
-            #TODO: FACE Identification and assign users to image
+            # TODO: GET AND STORE USER COL FROM SESSION USER
+            face_img = face_img_form.save()
+
+            # TODO: FACE Identification and assign users to image
             payload = json.loads(u'{"username": "kimsup10"}')
-            face_img_form.save()
             return JsonResponse(payload)
 
         return HttpResponseBadRequest()
