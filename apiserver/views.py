@@ -48,7 +48,7 @@ class JoinView(generic.View):
         if user_form.is_valid():
             user = user_form.save(commit=False)
             if User.objects.filter(username=user.username):
-                return render('./join.html')
+                return render(request, './join.html')
 
             request.session['username'] = user.username
             user.correction_degree = CorrectionDegree.objects.create()
@@ -129,13 +129,15 @@ class APICorrectionDegreeView(generic.View):
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username="kimsup10")
+	print request.body
         payload = json.loads(request.body.decode('utf-8'))
-        user.correction_degree.eyes = payload.eyes
-        user.correction_degree.chin = paylaod.chin
+	print payload
+        user.correction_degree.eyes = payload["eyes"]
+        user.correction_degree.chin = payload["chin"]
         user.correction_degree.save()
         user.save()
 
-        return redirect('/')
+        return HttpResponse('/')
 
 
 class FlushView(generic.View):
