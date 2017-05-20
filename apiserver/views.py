@@ -161,7 +161,7 @@ class APISelfieIdentificationView(generic.View):
             face_img_form.save()
             return JsonResponse(payload)
 
-        return HttpResponseBadRequest
+        return HttpResponseBadRequest()
 
 
 class FlushView(generic.View):

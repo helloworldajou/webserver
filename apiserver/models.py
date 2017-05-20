@@ -28,12 +28,12 @@ class User(models.Model):
 
 class FaceImage(models.Model):
     user = models.ForeignKey(User)
-    file = models.ImageField(upload_to="/user")
+    file = models.ImageField()
     uploaded_at = models.DateTimeField(null=True, blank=True)
 
-    @receiver(pre_save)
-    def set_datetime(self):
+#    @receiver(pre_save)
+#    def set_datetime(self):
         # TODO: 한국시간 설정
-        self.uploaded_at = datetime.datetime
+#        self.uploaded_at = datetime.datetime
 
 
