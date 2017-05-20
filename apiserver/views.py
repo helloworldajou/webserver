@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, redirect
 
 from models import User, CorrectionDegree
-from forms import  *
+from forms import *
 
 
 class IndexView(generic.View):
@@ -48,7 +48,7 @@ class JoinView(generic.View):
         if user_form.is_valid():
             user = user_form.save(commit=False)
             if User.objects.filter(username=user.username):
-                return render('./join.html')
+                return render(request, './join.html')
 
             request.session['username'] = user.username
             user.correction_degree = CorrectionDegree.objects.create()
@@ -136,6 +136,19 @@ class APICorrectionDegreeView(generic.View):
         user.save()
 
         return redirect('/')
+
+
+class APISelfieIdentificationView(generic.View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return generic.View.dispatch(self, request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse()
+
+    def post(self, request, *args, **kwargs):
+
+        return HttpResponse()
 
 
 class FlushView(generic.View):

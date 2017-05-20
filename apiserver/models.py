@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 
@@ -20,3 +21,10 @@ class User(models.Model):
     password = models.CharField(max_length=20)
     email = models.CharField(max_length=30)
     correction_degree = models.OneToOneField(CorrectionDegree, blank=True, null=True)
+
+
+class Image(models.Model):
+    uploader = models.ForeignKey(User)
+    file = models.FileField()
+    users_in_img = ArrayField(User, null=True, blank=True)
+
