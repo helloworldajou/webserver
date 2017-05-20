@@ -26,7 +26,7 @@ class CorrectionDegreeSetForm(forms.ModelForm):
         fields = '__all__'
 
 
-class SelfieForm(forms.ModelForm):
+class FaceImgForm(forms.ModelForm):
     class Meta:
-        model = Image
-        fields = ['uploader', 'file']
+        model = FaceImage
+        exclude = ['uploaded_at']

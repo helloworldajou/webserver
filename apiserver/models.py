@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.contrib.postgres.fields import ArrayField
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.db import models
+
+import datetime
 
 
 class CorrectionDegree(models.Model):
@@ -23,8 +26,14 @@ class User(models.Model):
     correction_degree = models.OneToOneField(CorrectionDegree, blank=True, null=True)
 
 
-class Image(models.Model):
-    uploader = models.ForeignKey(User)
-    file = models.FileField()
-    users_in_img = ArrayField(User, null=True, blank=True)
+class FaceImage(models.Model):
+    user = models.ForeignKey(User)
+    file = models.ImageField(upload_to="/user")
+    uploaded_at = models.DateTimeField(null=True, blank=True)
+
+    @receiver(pre_save)
+    def set_datetime(self):
+        # TODO: 한국시간 설정
+        self.uploaded_at = datetime.datetime
+
 

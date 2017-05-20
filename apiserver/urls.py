@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     url(r'^api/correction_degree/', views.APICorrectionDegreeView.as_view(), name='index'),
-    url(r'^selfie/identify', view.APISelfieIdentificationView.as_view(), name='selfie'),
+    url(r'^selfie/identify', views.APISelfieIdentificationView.as_view(), name='selfie'),
     url(r'^correction_degree/', views.CorrectionDegreeView.as_view(), name='index'),
     url(r'user/logout', views.LogoutView.as_view(), name='logout'),
     url(r'user/login', views.LoginView.as_view(), name='login'),
