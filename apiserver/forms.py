@@ -19,7 +19,14 @@ class LoginForm(forms.ModelForm):
             'password': forms.PasswordInput(),
         }
 
+
 class CorrectionDegreeSetForm(forms.ModelForm):
     class Meta:
         model = CorrectionDegree
         fields = '__all__'
+
+
+class SelfieForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ['uploader', 'file']

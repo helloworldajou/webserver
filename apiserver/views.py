@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, redirect
 
 from models import User, CorrectionDegree
-from forms import  *
+from forms import *
 
 
 class IndexView(generic.View):
@@ -138,6 +138,19 @@ class APICorrectionDegreeView(generic.View):
         user.save()
 
         return HttpResponse('/')
+
+
+class APISelfieIdentificationView(generic.View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return generic.View.dispatch(self, request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse()
+
+    def post(self, request, *args, **kwargs):
+
+        return HttpResponse()
 
 
 class FlushView(generic.View):
