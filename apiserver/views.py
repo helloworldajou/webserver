@@ -132,9 +132,7 @@ class APICorrectionDegreeView(generic.View):
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username="kimsup10")
-	print request.body
         payload = json.loads(request.body.decode('utf-8'))
-	print payload
         user.correction_degree.eyes = payload["eyes"]
         user.correction_degree.chin = payload["chin"]
         user.correction_degree.save()
@@ -149,16 +147,15 @@ class APISelfieIdentificationView(generic.View):
         return generic.View.dispatch(self, request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse()
+        return render(request, './selfie.html')
 
     def post(self, request, *args, **kwargs):
         face_img_form = FaceImgForm(request.POST, request.FILES)
         if face_img_form.is_valid():
             # TODO: GET AND STORE USER COL FROM SESSION USER
-            face_img = face_img_form.save()
-
             # TODO: FACE Identification and assign users to image
-            payload = json.loads(u'{"username": "kimsup10"}')
+            face_img = face_img_form.save()
+            payload = json.loads('{"file_name": "'+face_img.file.path + '"}')
             return JsonResponse(payload)
 
         return HttpResponseBadRequest()

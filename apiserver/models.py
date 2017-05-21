@@ -27,7 +27,7 @@ class User(models.Model):
 
 
 class FaceImage(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, null=True, blank=True)
     file = models.ImageField()
     uploaded_at = models.DateTimeField(null=True, blank=True)
 

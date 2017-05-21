@@ -1,0 +1,25 @@
+version: '2'
+services:
+  webapp:
+    build: .
+    image: wsdg4/webapp
+    container_name: cumera-webapp
+    ports:
+      - "80:80"
+    networks:
+      - cumera-nw
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    image: postgres
+    container_name: cumera-db
+    networks:
+      - cumera-nw
+  redis:
+    image: redis
+    container_name: cumera-redis
+    networks:
+      - cumera-nw
+networks:
+  cumera-nw:
