@@ -131,6 +131,7 @@ class APICorrectionDegreeView(generic.View):
         return JsonResponse(payload)
 
     def post(self, request, *args, **kwargs):
+        username = kwargs.get('username')
         user = User.objects.get(username="kimsup10")
         payload = json.loads(request.body.decode('utf-8'))
         user.correction_degree.eyes = payload["eyes"]
