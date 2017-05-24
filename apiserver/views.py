@@ -7,7 +7,7 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, redirect
-
+from demos.classifier import infer
 from models import User, CorrectionDegree
 from forms import *
 
@@ -153,9 +153,10 @@ class APISelfieIdentificationView(generic.View):
         face_img_form = FaceImgForm(request.POST, request.FILES)
         if face_img_form.is_valid():
             # TODO: GET AND STORE USER COL FROM SESSION USER
-            # TODO: FACE Identification and assign users to image
             face_img = face_img_form.save()
-            payload = json.loads('{"file_name": "'+face_img.file.path + '"}')
+            # TODO: FACE Identification and assign users to image
+            person = infer('/root/openface/data/faces/feature/classifier.pkl', [face_img.file.path])
+            payload = json.loads(u'{"username": "' + person.decode('utf-8') + '"}')
             return JsonResponse(payload)
 
         return HttpResponseBadRequest()

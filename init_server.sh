@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 sudo cp nginx.conf /etc/nginx/sites-enabled/
 service postgresql start
 service nginx restart
