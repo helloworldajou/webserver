@@ -126,13 +126,14 @@ class APICorrectionDegreeView(generic.View):
         return generic.View.dispatch(self, request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.filter(username="kimsup10")[0]
+        username = kwargs.get('username')
+        user = User.objects.filter(username=username)[0]
         payload = user.correction_degree.return_json()
         return JsonResponse(payload)
 
     def post(self, request, *args, **kwargs):
         username = kwargs.get('username')
-        user = User.objects.get(username="kimsup10")
+        user = User.objects.get(username=username)
         payload = json.loads(request.body.decode('utf-8'))
         user.correction_degree.eyes = payload["eyes"]
         user.correction_degree.chin = payload["chin"]
