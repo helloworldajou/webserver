@@ -157,8 +157,12 @@ class APISelfieIdentificationView(generic.View):
             # TODO: FACE Identification and assign users to image
             person = infer('/root/openface/data/faces/feature/classifier.pkl', [face_img.file.path])
             username = person.decode('utf-8')
-            user = User.objects.get_or_create(username=username)
+            user = User.objects.get_or_create(username=username)[0]
+            if user.correction_degree is None:
+                user.correction_degree = CorrectionDegree.objects.create()
+                user.save()
             degree = user.correction_degree.return_json()
+
             #payload = json.loads(u'{"username": "' + username + '"}')
             payload = {"username": username}
             payload.update(degree)
