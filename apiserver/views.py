@@ -129,12 +129,14 @@ class APICorrectionDegreeView(generic.View):
         username = kwargs.get('username')
         user = User.objects.filter(username=username)[0]
         payload = user.correction_degree.return_json()
+        print payload
         return JsonResponse(payload)
 
     def post(self, request, *args, **kwargs):
         username = kwargs.get('username')
         user = User.objects.get(username=username)
         payload = json.loads(request.body.decode('utf-8'))
+        print payload
         user.correction_degree.eyes = payload["eyes"]
         user.correction_degree.chin = payload["chin"]
         user.correction_degree.save()
@@ -164,10 +166,9 @@ class APISelfieIdentificationView(generic.View):
                 user.correction_degree = CorrectionDegree.objects.create()
                 user.save()
             degree = user.correction_degree.return_json()
-
-            #payload = json.loads(u'{"username": "' + username + '"}')
             payload = {"username": username}
             payload.update(degree)
+            print payload
             return JsonResponse(payload)
 
         return HttpResponseBadRequest()
