@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
-from django.core import serializers
+
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render, redirect
-from demos.classifier import infer
-from models import User, CorrectionDegree
+
+from apiserver.face_identifier import identifier
 from forms import *
 
-
-def handle_uploaded_file(file):
-    return
 
 class IndexView(generic.View):
     @method_decorator(csrf_exempt)
@@ -129,20 +127,46 @@ class APICorrectionDegreeView(generic.View):
         username = kwargs.get('username')
         user = User.objects.filter(username=username)[0]
         payload = user.correction_degree.return_json()
-        print payload
         return JsonResponse(payload)
 
     def post(self, request, *args, **kwargs):
         username = kwargs.get('username')
         user = User.objects.get(username=username)
         payload = json.loads(request.body.decode('utf-8'))
-        print payload
         user.correction_degree.eyes = payload["eyes"]
         user.correction_degree.chin = payload["chin"]
         user.correction_degree.save()
         user.save()
 
         return HttpResponse('/')
+
+
+class APISelfieTrainingView(generic.View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return generic.View.dispatch(self, request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # TODO: Initiate Training!!!
+        username = kwargs.get('username')
+        identifier.trainSVM(username)
+
+        return render(request, './selfie.html')
+
+    def post(self, request, *args, **kwargs):
+        username = kwargs.get('username')
+        face_img_form = FaceImgForm(request.POST, request.FILES)
+        payload = {"message": u"Invalid"}
+
+        if face_img_form.is_valid():
+            face_img = face_img_form.save(commit=False)
+            face_img.user = User.objects.get_or_create(username=username)[0]
+            face_img.save()
+            payload = {"message": u"Done at"+face_img.file.path}
+            print 'Done! '+face_img.file.path
+
+        return render(request, './selfie.html', payload)
 
 
 class APISelfieIdentificationView(generic.View):
@@ -156,19 +180,18 @@ class APISelfieIdentificationView(generic.View):
     def post(self, request, *args, **kwargs):
         face_img_form = FaceImgForm(request.POST, request.FILES)
         if face_img_form.is_valid():
-            # TODO: GET AND STORE USER COL FROM SESSION USER
             face_img = face_img_form.save()
-            # TODO: FACE Identification and assign users to image
-            person = infer('/root/openface/data/faces/feature/classifier.pkl', [face_img.file.path])
+
+            person = identifier.predict(face_img.file.path)
+
             username = person.decode('utf-8')
             user = User.objects.get_or_create(username=username)[0]
             if user.correction_degree is None:
                 user.correction_degree = CorrectionDegree.objects.create()
                 user.save()
-            degree = user.correction_degree.return_json()
+
             payload = {"username": username}
-            payload.update(degree)
-            print payload
+            payload.update(user.correction_degree.return_json())
             return JsonResponse(payload)
 
         return HttpResponseBadRequest()

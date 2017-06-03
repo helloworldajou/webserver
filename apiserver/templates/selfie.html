@@ -5,9 +5,20 @@
     <title>Upload</title>
 </head>
 <body>
-    <form action="/api/selfie/identify" method="POST" enctype="multipart/form-data">
+    <h2> Identify </h2>
+    <form action="./identify" method="POST" enctype="multipart/form-data">
         <input type="file" name="file">
         <input type="submit">
+    </form>
+    <h2> Train </h2>
+    <form action="./train" method="POST" enctype="multipart/form-data">
+        <input type="text" name="user">
+        <input type="file" name="file">
+        <input type="submit" value="Send pic for training">
+    </form>
+    <form action="./train" method="GET">
+        <input type="text" name="user">
+        <input type="submit" value="Train!">
     </form>
 </body>
 </html>

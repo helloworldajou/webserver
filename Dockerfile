@@ -28,14 +28,16 @@ RUN apt-get update && apt-get install -y \
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-ADD . /root/openface
+WORKDIR /root/openface
+
+ADD ./requirements.txt /root/openface/requirements.txt
 RUN python -m pip install --upgrade --force pip
+RUN pip2 install -r requirements.txt
+
+ADD . /root/openface
 RUN cd ~/openface && \
     ./models/get-models.sh && \
-    pip2 install -r requirements.txt && \
-    python2 setup.py install && \
-    pip2 install --user --ignore-installed -r demos/web/requirements.txt && \
-    pip2 install -r training/requirements.txt
+    python2 setup.py install
 
 #ENV DATABASE_URL postgres://postgres@cumera-db/cumeradb
 #ENV REDIS_URL redis://cumera-redis/0
