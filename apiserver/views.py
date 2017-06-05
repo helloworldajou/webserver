@@ -133,6 +133,7 @@ class APICorrectionDegreeView(generic.View):
         username = kwargs.get('username')
         user = User.objects.get(username=username)
         payload = json.loads(request.body.decode('utf-8'))
+        print payload
         user.correction_degree.eyes = payload["eyes"]
         user.correction_degree.chin = payload["chin"]
         user.correction_degree.save()
@@ -141,8 +142,19 @@ class APICorrectionDegreeView(generic.View):
         return HttpResponse('/')
 
 
-class APISelfieTrainingView(generic.View):
+class APISelfieView(generic.View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return generic.View.dispatch(self, request, *args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        return render(request, './selfie.html')
+
+    def post(self, request, *args, **kwargs):
+        return render(request, './selfie.html')
+
+
+class APISelfieTrainingView(generic.View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return generic.View.dispatch(self, request, *args, **kwargs)
@@ -164,7 +176,8 @@ class APISelfieTrainingView(generic.View):
             face_img.user = User.objects.get_or_create(username=username)[0]
             face_img.save()
             payload = {"message": u"Done at"+face_img.file.path}
-            print 'Done! '+face_img.file.path
+            # identifier.processFrame(face_img.file.path, username)
+            print 'Upload done! '+face_img.file.path
 
         return render(request, './selfie.html', payload)
 
@@ -192,6 +205,7 @@ class APISelfieIdentificationView(generic.View):
 
             payload = {"username": username}
             payload.update(user.correction_degree.return_json())
+            print payload
             return JsonResponse(payload)
 
         return HttpResponseBadRequest()

@@ -4,8 +4,8 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.svm import SVC
 
 import openface
-from apiserver.models import FaceImage
 from demos.classifier import align, net
+from models import FaceImage
 
 
 class Face:
@@ -24,23 +24,28 @@ class FaceIdentifier:
     def __init__(self):
         self.images = []
         self.users = ['unknown']
+        self.__training = False
         self.svm = None
 
-        dummy = "data/faces/raw/2jeonghan/2jeonghan-1.png"
+        dummy = "data/faces/raw/2jeonghan/2jeonghan-2.png"
         for i in range(5):
-            self.processFrame(dummy, 0)
+            self.processFrame(dummy, 'unknown')
+
+    def trainSVMSynchronously(self, username):
+        while self.__training:
+            continue
+
+        self.__training = True
+        self.trainSVM(username)
+        self.__training = False
 
     def trainSVM(self, username):
-        if username not in self.users:
-            self.users.append(username)
-        identity = self.users.index(username)
-
         face_images = FaceImage.objects.filter(user__username=username)
         files = map(lambda x: x.file.path, face_images)
         for file in files:
-            self.processFrame(file, identity)
+            self.processFrame(file, username)
 
-        print("+ Training SVM on {} labeled images.".format(len(files)))
+        print("+ Training SVM on {} labeled images.".format(len(self.images)))
         d = self.getData()
 
         if d is None:
@@ -49,7 +54,9 @@ class FaceIdentifier:
             return
         else:
             (X, y) = d
-            numIdentities = len(set(y + [-1]))
+            print self.users
+            print y
+            numIdentities = len(set(y))
             if numIdentities < 1:
                 print "Invalid training"
                 return
@@ -71,15 +78,19 @@ class FaceIdentifier:
             X.append(img.rep)
             y.append(img.identity)
 
-        numIdentities = len(set(y + [-1])) - 1
+        numIdentities = len(set(y)) - 1
         if numIdentities == 0:
             return None
 
         X = np.vstack(X)
         y = np.array(y)
+
         return (X, y)
 
     def processFrame(self, imagePath, identity=None):
+        if self.__training:
+            return
+
         img = Image.open(imagePath)
         width, hegiht = img.size
         buf = np.fliplr(np.asarray(img))
@@ -88,7 +99,6 @@ class FaceIdentifier:
         rgbFrame[:, :, 1] = buf[:, :, 1]
         rgbFrame[:, :, 2] = buf[:, :, 0]
 
-        # bbs = align.getAllFaceBoundingBoxes(rgbFrame)
         bb = align.getLargestFaceBoundingBox(rgbFrame)
         bbs = [bb] if bb is not None else []
         for bb in bbs:
@@ -101,13 +111,22 @@ class FaceIdentifier:
                 continue
 
             rep = net.forward(alignedFace)
-            self.images.append(Face(rep, identity))
+
+            if identity is not None:
+                self.images.append(Face(rep, identity))
 
             return rep
 
     def predict(self, imagePath):
+        if self.__training:
+            return
+
         rep = self.processFrame(imagePath)
-        return self.users[self.svm.predict(rep)[0]]
+
+        if rep is None or self.svm is None:
+            return 'unknown'
+
+        return self.svm.predict(rep)[0]
 
 
 identifier = FaceIdentifier()
