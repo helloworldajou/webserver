@@ -1,25 +1,63 @@
 version: '2'
+
 services:
-  webapp:
-    build: .
-    image: wsdg4/webapp
-    container_name: cumera-webapp
+  # PostgreSQL database
+  db:
+    image: postgres:9.4
+    hostname: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     ports:
-      - "80:80"
-    networks:
-      - cumera-nw
-    depends_on:
-      - postgres
-      - redis
-  postgres:
-    image: postgres
-    container_name: cumera-db
-    networks:
-      - cumera-nw
+      - "5432"
+
+  # Redis
   redis:
-    image: redis
-    container_name: cumera-redis
-    networks:
-      - cumera-nw
-networks:
-  cumera-nw:
+    image: redis:2.8.19
+    hostname: redis
+
+  # RabbitMQ
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:3.6.0
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+      - "5672:5672"  # we forward this port because it's useful for debugging
+      - "15672:15672"  # here, we can access rabbitmq management plugin
+
+  # Django web server
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: web
+    command: ./init_server.sh
+    volumes:
+      - .:/root/openface  # mount current directory inside container
+    ports:
+      - "8000:8000"
+    # set up links so that web knows about db, rabbit and redis
+    links:
+      - db
+      - rabbit
+      - redis
+    depends_on:
+      - db
+
+  # Celery worker
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ./run_celery.sh
+    volumes:
+      - .:/root/openface
+    links:
+      - db
+      - rabbit
+      - redis
+    depends_on:
+      - rabbit

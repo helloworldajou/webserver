@@ -37,12 +37,6 @@ RUN pip2 install -r requirements.txt
 ADD . /root/openface
 RUN cd ~/openface && \
     ./models/get-models.sh && \
-    python2 setup.py install && \
-    chmod 777 init_server.sh
+    python2 setup.py install
 
-#ENV DATABASE_URL postgres://postgres@cumera-db/cumeradb
-#ENV REDIS_URL redis://cumera-redis/0
-EXPOSE 80 8000 9000
-
-#RUN chmod +x start_server.sh
-CMD /bin/bash -l -c '/root/openface/demos/web/start-servers.sh'
+RUN adduser --disabled-password --gecos '' cumera

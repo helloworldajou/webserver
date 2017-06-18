@@ -134,8 +134,8 @@ class APICorrectionDegreeView(generic.View):
         user = User.objects.get(username=username)
         payload = json.loads(request.body.decode('utf-8'))
         print payload
-        user.correction_degree.eyes = payload["eyes"]
-        user.correction_degree.chin = payload["chin"]
+        user.correction_degree.eyes = payload.get("eyes", 1)
+        user.correction_degree.chin = payload.get("chin", 90)
         user.correction_degree.save()
         user.save()
 
@@ -162,7 +162,7 @@ class APISelfieTrainingView(generic.View):
     def get(self, request, *args, **kwargs):
         # TODO: Initiate Training!!!
         username = kwargs.get('username')
-        identifier.trainSVM(username)
+        identifier.train_svm(username)
 
         return render(request, './selfie.html')
 
@@ -170,13 +170,12 @@ class APISelfieTrainingView(generic.View):
         username = kwargs.get('username')
         face_img_form = FaceImgForm(request.POST, request.FILES)
         payload = {"message": u"Invalid"}
-
         if face_img_form.is_valid():
             face_img = face_img_form.save(commit=False)
             face_img.user = User.objects.get_or_create(username=username)[0]
             face_img.save()
             payload = {"message": u"Done at"+face_img.file.path}
-            # identifier.processFrame(face_img.file.path, username)
+            identifier.process_frame(request.FILES['file'], username)
             print 'Upload done! '+face_img.file.path
 
         return render(request, './selfie.html', payload)
