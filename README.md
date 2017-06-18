@@ -16,7 +16,8 @@ deploy
 
 
 - Build
-Set local network ip or hostname into ALLOWED_HOST of cumera/settings.py
+
+First, set local network ip or hostname into ALLOWED_HOST of cumera/settings.py
 ```bash
 $ docker-compose build
 ```
