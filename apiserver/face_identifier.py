@@ -34,14 +34,13 @@ class FaceIdentifier:
             self.process_frame(dummy + str(i) + '.jpg', 'unknown')
 
     def train_svm(self, username):
-        self.__training = True
+        self.r.set('training', True)
         face_images = FaceImage.objects.filter(user__username=username)
         files = map(lambda x: x.file.path, face_images)
         for file in files:
             self.process_frame(file, username)
 
         train_svm.delay()
-        self.__training = False
         return
 
     @staticmethod
@@ -87,11 +86,13 @@ class FaceIdentifier:
             return rep
 
     def predict(self, image_path):
-        if self.__training:
+        if self.r.get('training'):
             return 'training'
 
         rep = self.process_frame(image_path)
-        svm = pickle.loads(self.r.get('classifier'))
+        classifier = self.r.get('classifier')
+        if classifier:
+            svm = pickle.loads(classifier)
 
         if rep is None or svm is None:
             return 'unknown'
@@ -127,5 +128,6 @@ def train_svm():
 
     svm_str = pickle.dumps(GridSearchCV(SVC(C=1), param_grid, cv=5).fit(X, y))
     r.set('classifier', svm_str)
+    r.set('training', False)
 
 identifier = FaceIdentifier()
