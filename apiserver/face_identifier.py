@@ -35,6 +35,11 @@ class FaceIdentifier:
 
     def train_svm(self, username):
         self.__training = True
+        face_images = FaceImage.objects.filter(user__username=username)
+        files = map(lambda x: x.file.path, face_images)
+        for file in files:
+            self.process_frame(file, username)
+
         train_svm.delay()
         self.__training = False
         return
@@ -56,9 +61,7 @@ class FaceIdentifier:
 
         return (X, y)
 
-    @staticmethod
-    def process_frame(image_path, identity=None):
-        r = redis.Redis(connection_pool=REDIS_CONNECTION_POOL)
+    def process_frame(self, image_path, identity=None):
         img = Image.open(image_path)
         width, hegiht = img.size
         buf = np.fliplr(np.asarray(img))
@@ -80,7 +83,7 @@ class FaceIdentifier:
 
             rep = net.forward(alignedFace)
             if identity is not None:
-                r.rpush('images', pickle.dumps(Face(rep, identity)))
+                self.r.rpush('images', pickle.dumps(Face(rep, identity)))
             return rep
 
     def predict(self, image_path):

@@ -174,7 +174,6 @@ class APISelfieTrainingView(generic.View):
             face_img.user = User.objects.get_or_create(username=username)[0]
             face_img.save()
             payload = {"message": u"Done at"+face_img.file.path}
-            FaceIdentifier.process_frame(request.FILES['file'], username)
 
         return render(request, './selfie.html', payload)
 
