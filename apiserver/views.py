@@ -133,7 +133,6 @@ class APICorrectionDegreeView(generic.View):
         username = kwargs.get('username')
         user = User.objects.get(username=username)
         payload = json.loads(request.body.decode('utf-8'))
-        print payload
         user.correction_degree.eyes = payload.get("eyes", 1)
         user.correction_degree.chin = payload.get("chin", 90)
         user.correction_degree.save()
@@ -176,7 +175,6 @@ class APISelfieTrainingView(generic.View):
             face_img.save()
             payload = {"message": u"Done at"+face_img.file.path}
             identifier.process_frame(request.FILES['file'], username)
-            print 'Upload done! '+face_img.file.path
 
         return render(request, './selfie.html', payload)
 
@@ -204,7 +202,6 @@ class APISelfieIdentificationView(generic.View):
 
             payload = {"username": username}
             payload.update(user.correction_degree.return_json())
-            print payload
             return JsonResponse(payload)
 
         return HttpResponseBadRequest()
