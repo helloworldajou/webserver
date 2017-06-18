@@ -1,10 +1,12 @@
-import numpy as np
 import pickle
+
+import numpy as np
 from PIL import Image
 from sklearn.grid_search import GridSearchCV
 from sklearn.svm import SVC
 
-import openface, redis
+import openface
+import redis
 from cumera.celeryconf import app
 from demos.classifier import align, net
 from models import FaceImage
@@ -86,7 +88,7 @@ class FaceIdentifier:
             return rep
 
     def predict(self, image_path):
-        if self.r.get('training'):
+        if self.r.get('training') == "True":
             return 'training'
 
         rep = self.process_frame(image_path)
@@ -116,7 +118,6 @@ def train_svm():
         if numIdentities < 1:
             print "Invalid training"
             return
-
     param_grid = [
         {'C': [1, 10, 100, 1000],
          'kernel': ['linear']},

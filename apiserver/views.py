@@ -136,6 +136,7 @@ class APICorrectionDegreeView(generic.View):
         user.correction_degree.eyes = payload.get("eyes", 1)
         user.correction_degree.chin = payload.get("chin", 90)
         user.correction_degree.save()
+
         user.save()
 
         return HttpResponse('/')
