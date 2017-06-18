@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 
-from apiserver.face_identifier import identifier
+from apiserver.face_identifier import identifier, FaceIdentifier
 from forms import *
 
 
@@ -174,7 +174,7 @@ class APISelfieTrainingView(generic.View):
             face_img.user = User.objects.get_or_create(username=username)[0]
             face_img.save()
             payload = {"message": u"Done at"+face_img.file.path}
-            identifier.process_frame(request.FILES['file'], username)
+            FaceIdentifier.process_frame(request.FILES['file'], username)
 
         return render(request, './selfie.html', payload)
 
