@@ -90,13 +90,12 @@ class FaceIdentifier:
             return 'training'
 
         rep = self.process_frame(image_path)
-        classifier = self.r.get('classifier')
-        if classifier:
-            svm = pickle.loads(classifier)
+        serialized_svm = self.r.get('classifier')
 
-        if rep is None or svm is None:
+        if rep is None or serialized_svm is None:
             return 'unknown'
 
+        svm = pickle.loads(serialized_svm)
         return svm.predict(rep)[0]
 
 
