@@ -37,7 +37,7 @@ $ docker-compose stop
 $ docker-compose down
 ```
 
-- Rebuild webapp
+- Rebuild only a apiserver
 ```bash
-$ docker-compose build webapp
+$ docker-compose build web
 ```
